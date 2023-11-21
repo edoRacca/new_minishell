@@ -1,36 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   history.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/12 18:14:15 by eraccane          #+#    #+#             */
-/*   Updated: 2023/11/21 22:43:35 by eraccane         ###   ########.fr       */
+/*   Created: 2023/11/17 17:43:16 by eraccane          #+#    #+#             */
+/*   Updated: 2023/11/17 19:27:21 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./minishell.h"
+#include "minishell.h"
 
-int	main(int ac, char *av[], char **env)
+void	print_history(t_env *e)
 {
-	t_env	*e;
+	int	i;
 
-	(void)ac;
-	(void)av;
-	// (void)env;
-	e = malloc(sizeof(t_env));
-	init_env(e, env);
-	while(1)
+	e->history = history_list();
+	i = 0;
+	if (e->history != NULL)
 	{
-		signals(e);
-		e->line = readline("$> ");
-		if (e->line == NULL)
-			ctrl_d(e);
-		parsing(e);
-		if (e->line[0] != '\0')
-			add_history(e->line);
-		// printf("|%s|\n", e->line);
-		free_tokens(&e->tokens);
+		while (e->history[i] != NULL)
+		{
+			printf(" %d  %s\n", i + 1, e->history[i]->line);
+			i++;
+		}
+	}
+	else
+	{
+		printf("history is empty\n");
 	}
 }

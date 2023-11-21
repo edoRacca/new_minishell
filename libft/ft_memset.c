@@ -1,36 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_memset.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/12 18:14:15 by eraccane          #+#    #+#             */
-/*   Updated: 2023/11/21 22:43:35 by eraccane         ###   ########.fr       */
+/*   Created: 2022/10/23 11:02:55 by eraccane          #+#    #+#             */
+/*   Updated: 2022/10/23 11:05:07 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "libft.h"
 
-#include "./minishell.h"
-
-int	main(int ac, char *av[], char **env)
+void	*ft_memset(void *b, int c, size_t len)
 {
-	t_env	*e;
+	size_t	i;
 
-	(void)ac;
-	(void)av;
-	// (void)env;
-	e = malloc(sizeof(t_env));
-	init_env(e, env);
-	while(1)
+	i = 0;
+	while (i < len)
 	{
-		signals(e);
-		e->line = readline("$> ");
-		if (e->line == NULL)
-			ctrl_d(e);
-		parsing(e);
-		if (e->line[0] != '\0')
-			add_history(e->line);
-		// printf("|%s|\n", e->line);
-		free_tokens(&e->tokens);
+		*((unsigned char *)b + i) = c;
+		i++;
 	}
+	return (b);
 }

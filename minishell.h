@@ -6,7 +6,7 @@
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 17:25:13 by eraccane          #+#    #+#             */
-/*   Updated: 2023/11/14 19:06:28 by eraccane         ###   ########.fr       */
+/*   Updated: 2023/11/21 22:57:55 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,6 +127,7 @@ tputs = invia una sequenza di escape terminfo alla console.
 
 # include "libft/libft.h"
 # include <sys/ioctl.h>
+# include <errno.h>
 # include <dirent.h>
 # include <readline/history.h>
 # include <readline/readline.h>
@@ -140,19 +141,101 @@ tputs = invia una sequenza di escape terminfo alla console.
 # include <sys/stat.h>
 # include <fcntl.h>
 
+/* -- TOKEN TYPE -- */
+# define TK_EMPTY 0
+# define TK_PATH 1
+# define TK_CMD_BUILT 2
+# define TK_CMD_NOBUILT 3
+# define TK_FLAG 4
+# define TK_ARG 5
+# define TK_PIPE 6
+# define TK_TRUNC 7
+# define TK_APPEND 8
+# define TK_INPUT 9
+
+/* -- STD -- */
+# define STDIN 0
+# define STDOUT 1
+# define STDERR 2
+
+/* -- EXIT CODE -- */
+# define ERROR 1
+# define SUCCESS 0
+# define DIRECTORY 126
+# define UNKNOWN_CMD 127
+
+typedef struct s_token {
+	char			*string;
+	int				token_type;
+	struct s_token	*next;
+}				t_token;
+
 typedef struct s_env {
-	char	**env;
-	char	*line;
-	char	*path;
-	int		exit_status;
+	char		**env;
+	char		*line;
+	char		*path;
+	char		*cmd_path;
+	int			exit_status;
+	HIST_ENTRY	**history;
+	t_token		*tokens;
 }               t_env;
 
 /*
------------ env_function.c ----------
+** env_function.c **
 */
-void    copy_env_line(char *dest, char *src);
+void	copy_env_line(char *dest, char *src);
 int		size_env(char **env);
 void	copy_env(t_env *e, char **env);
+void	print_env(char **env);
 void	init_env(t_env *e, char **env);
+
+/*
+** history.c **
+*/
+void	print_history(t_env *e);
+
+/*
+** parsing.c **
+*/
+int		not_builtin_cmd(char *word);
+int		is_builtin_cmd(char *word);
+void	select_token_type(t_token *token, char *word);
+void	parsing(t_env *e);
+
+/*
+** path_functions.c **
+*/
+int		find_path(char *str);
+void	copy_path(t_env *e, int i, int j);
+void	cmd_path(t_env *e, int i, int j);
+void	search_path(t_env *e);
+
+/*
+** signals.c **
+*/
+void	signals(t_env *e);
+void	ctrl_d(t_env *e);
+
+/*
+** token_funtions_2.c
+*/
+void    print_tokens(t_token *tokens);
+
+/*
+** token_funtions.c
+*/
+t_token	*find_last_token(t_token *token);
+void	addback_token_node(t_token **token, t_token *new);
+t_token	*new_token_node(char *word);
+void	init_tokens(t_env *e, char **cmd_line);
+void	free_tokens(t_token **tokens);
+
+/*
+** utils.c **
+*/
+void	print_matrix(char **matrix);
+void	free_matrix(char **str);
+void	*memdelete(void *ptr);
+int		str_compare(char *s1, char *s2);
 
 #endif

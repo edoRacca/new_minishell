@@ -6,11 +6,11 @@
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/08 09:39:23 by eraccane          #+#    #+#             */
-/*   Updated: 2022/11/16 17:53:45 by eraccane         ###   ########.fr       */
+/*   Updated: 2023/11/21 20:04:23 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 #include "libft.h"
-#include <stdlib.h>
 
 static size_t	ft_lenalloc(char const *s, char c)
 {
@@ -58,3 +58,4 @@ char	**ft_split(char const *s, char c)
 	str[i] = 0;
 	return (str);
 }
+// ft_substr(s - l, 0, l)
