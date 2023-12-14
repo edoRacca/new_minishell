@@ -6,7 +6,7 @@
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 20:12:06 by eraccane          #+#    #+#             */
-/*   Updated: 2023/12/12 11:53:17 by eraccane         ###   ########.fr       */
+/*   Updated: 2023/12/14 12:02:22 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,17 +125,22 @@ void	executing(t_env *e)
 {
 	if (str_cmp(e->tokens->string, "exit") == 1 && e->exit == 0)
 		exiting(e, 0);
-	else if (search_arrows(e) == TRUNC && e->redir == 1)
-		redirect_trunc(e);
-	else if (search_arrows(e) == APPEND && e->redir == 1)
-		redirect_append(e);
-	else if (search_arrows(e) == INPUT && e->redir == 1)
-		redirect_input(e);
-	else if (search_arrows(e) == HDOC && e->redir == 1)
-		redirect_hdoc(e);
-	else if (e->tokens->type == BUILT || \
-		e->tokens->type == NOBUILT || e->tokens->type == PATH)
-		cmd_type(e);
-	else
-		cmd_notfound(e);
+    if (count_redirection(e) > 1)
+        multiple_redir(e);
+    else
+    {
+        if (search_arrows(e) == TRUNC && e->redir == 1)
+            redirect_trunc(e);
+        else if (search_arrows(e) == APPEND && e->redir == 1)
+            redirect_append(e);
+        else if (search_arrows(e) == INPUT && e->redir == 1)
+            redirect_input(e);
+        else if (search_arrows(e) == HDOC && e->redir == 1)
+            redirect_hdoc(e);
+        else if (e->tokens->type == BUILT || \
+            e->tokens->type == NOBUILT || e->tokens->type == PATH)
+            cmd_type(e);
+        else
+            cmd_notfound(e);
+    }
 }

@@ -6,13 +6,13 @@
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 16:58:18 by eraccane          #+#    #+#             */
-/*   Updated: 2023/12/12 18:41:14 by eraccane         ###   ########.fr       */
+/*   Updated: 2023/12/14 11:42:50 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int sig_code;
+int		sig_code;
 
 void	handle_signal(int sig)
 {
@@ -20,8 +20,9 @@ void	handle_signal(int sig)
 	{
 		sig_code = 130;
 		ioctl(STDIN_FILENO, TIOCSTI, "\n");
-		rl_replace_line("^C\n", 0);
+		rl_replace_line("", 0);
 		rl_on_new_line();
+		rl_clear_history();
 	}
 }
 
@@ -33,11 +34,10 @@ void	signals(t_env *e)
 	{
 		e->exit_status = sig_code;
 		sig_code = 0;
-		rl_clear_history();
 	}
 }
 
-void    ctrl_d(t_env *e)
+void	ctrl_d(t_env *e)
 {
 	if (e->path != NULL)
 		free(e->path);
@@ -64,4 +64,3 @@ int	signals_hdoc(char *line, char *delimiter, char *buffer)
 	}
 	return (0);
 }
-	

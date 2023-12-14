@@ -6,7 +6,7 @@
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 16:49:45 by eraccane          #+#    #+#             */
-/*   Updated: 2023/12/14 00:39:25 by eraccane         ###   ########.fr       */
+/*   Updated: 2023/12/14 11:18:41 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ void	piping(t_env *e)
 
 	i = 0;
 	e->exit_status = 0;
-	printf("i: %d, e->tokens: %s", i, e->tokens->string);
 	while (i < e->count_pipe)
 	{
 		if (pipe(e->pipe_fd) == -1)
@@ -48,9 +47,8 @@ void	piping(t_env *e)
 			exiting(e, 1);
 		}
 		multiple_pipe(e);
-		printf("i: %d, e->tokens: %s", i, e->tokens->string);
 		i++;
-		update_pipe(e);
+		e->tokens = update_pipe(e);
 	}
 	parent_process(e);
 	dup2(e->stdin, STDIN_FILENO);

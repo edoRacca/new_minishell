@@ -6,15 +6,16 @@
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 23:47:00 by eraccane          #+#    #+#             */
-/*   Updated: 2023/12/14 01:05:18 by eraccane         ###   ########.fr       */
+/*   Updated: 2023/12/14 11:36:57 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	update_pipe(t_env *e)
+t_token	*update_pipe(t_env *e)
 {
 	t_token	*tokens;
+	t_token	*last_cmd;
 
 	tokens = start_token(e->tokens);
 	while (e->tokens != NULL)
@@ -23,22 +24,15 @@ void	update_pipe(t_env *e)
 		tokens->type != TRUNC && tokens->type != APPEND && \
 		tokens->type != INPUT)
 			tokens = tokens->next;
-		if (e->tokens == NULL)
-			return ;
-		if (e->tokens->type == TRUNC || e->tokens->type == INPUT || \
-		e->tokens->type == APPEND)
-			return ;
-		if (e->tokens != NULL)
-			e->tokens = e->tokens->next;
+		if (tokens == NULL)
+			return (last_cmd);
+		last_cmd = start_token(tokens);
+		if (tokens != NULL)
+			return(tokens->next);
 	}
+	return (last_cmd);
 }
 
-/* FIXME
-** SEGFAULT quando va a controllare il token per l'ultimo processo
-** l'errore viene da 'update_pipe' che restituisce un token NULL che appunto
-** ha attributi. Va cambiato il return in caso di insistenza di altre pipe
-** in modo da far restituire l'ultimo comando subito dopo l'ultima pipe
-*/
 void	parent_command(t_env *e)
 {
 	e->pid_pipe = fork();
@@ -66,9 +60,8 @@ void	parent_process(t_env *e)
 		redir_free(e);
 		alloc_flagmatrix(e);
 		alloc_cmd_path(e);
-		if (access(e->cmd_path, X_OK) == -1)
+		if (access(e->cmd_path, X_OK) == 0)
 			parent_command(e);
-		exiting(e, 0);
 	}
 	else
 		cmd_type(e);
@@ -90,7 +83,7 @@ void	fork_loop(t_env *e)
 		redir_free(e);
 		alloc_flagmatrix(e);
 		alloc_cmd_path(e);
-		if (access(e->cmd_path, X_OK) == -1)
+		if (access(e->cmd_path, X_OK) == 0)
 		{
 			execve(e->cmd_path, e->flag_matrix, e->env);
 			perror("execve");
