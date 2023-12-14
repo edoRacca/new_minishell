@@ -6,7 +6,7 @@
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 22:51:29 by eraccane          #+#    #+#             */
-/*   Updated: 2023/11/20 16:23:33 by eraccane         ###   ########.fr       */
+/*   Updated: 2023/12/13 22:51:06 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 /*
 ** NOTE - env line is copied in e->env line
 */
-void    copy_env_line(char *dest, char *src)
+void    copy_line(char *dest, char *src)
 {
     int i;
 
@@ -53,7 +53,7 @@ void	copy_env(t_env *e, char **env)
 	while (env[i] != NULL)
 	{
 		e->env[i] = (char *)malloc(sizeof(char) * ft_strlen(env[i]) + 1);
-		copy_env_line(e->env[i], env[i]);
+		copy_line(e->env[i], env[i]);
 		i++;
 	}
     e->env[i] = NULL;
@@ -69,17 +69,19 @@ void	print_env(char **env)
 		printf("%s\n", env[i]);
 		i++;
 	}
-	printf("\n");
 }
 
 void	init_env(t_env *e, char **env)
 {
-	e->line = NULL;
 	copy_env(e, env);
-	e->exit_status = 0;
+	e->line = NULL;
 	search_path(e);
-	e->history = NULL;
+	e->cmd_path = NULL;
+	e->flag_matrix = NULL;
+	e->exit_status = 0;
+	e->quotes = -1;
+	e->hdoc = 0;
 	e->tokens = NULL;
-	// print_env(e->env);
-	// printf("%s\n\n", e->path);
+	e->stdin = dup(STDIN_FILENO);
+	e->stdout = dup(STDOUT_FILENO);
 }

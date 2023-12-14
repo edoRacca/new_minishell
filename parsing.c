@@ -6,7 +6,7 @@
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/19 10:39:27 by eraccane          #+#    #+#             */
-/*   Updated: 2023/11/21 23:01:59 by eraccane         ###   ########.fr       */
+/*   Updated: 2023/12/12 22:54:56 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,21 @@
 
 int	not_builtin_cmd(char *word)
 {
-	if (str_compare(word, "ls") == 1)
+	if (str_cmp(word, "ls") == 1)
 		return (1);
-	else if (str_compare(word, "grep") == 1)
+	else if (str_cmp(word, "grep") == 1)
 		return (1);
-	else if (str_compare(word, "cat") == 1)
+	else if (str_cmp(word, "cat") == 1)
 		return (1);
-	else if (str_compare(word, "cp") == 1)
+	else if (str_cmp(word, "cp") == 1)
 		return (1);
-	else if (str_compare(word, "mv") == 1)
+	else if (str_cmp(word, "mv") == 1)
 		return (1);
-	else if (str_compare(word, "rm") == 1)
+	else if (str_cmp(word, "rm") == 1)
 		return (1);
-	else if (str_compare(word, "mkdir") == 1)
+	else if (str_cmp(word, "mkdir") == 1)
+		return (1);
+	else if (str_cmp(word, "clear") == 1)
 		return (1);
 	else
 		return (0);
@@ -35,51 +37,50 @@ int	not_builtin_cmd(char *word)
 // TODO
 int	is_builtin_cmd(char *word)
 {
-	if (str_compare(word, "echo") == 1)
+	if (str_cmp(word, "echo") == 1)
 		return (1);
-	else if (str_compare(word, "cd") == 1)
+	else if (str_cmp(word, "cd") == 1)
 		return (1);
-	else if (str_compare(word, "env") == 1)
+	else if (str_cmp(word, "env") == 1)
 		return (1);
-	else if (str_compare(word, "export") == 1)
+	else if (str_cmp(word, "export") == 1)
 		return (1);
-	else if (str_compare(word, "unset") == 1)
+	else if (str_cmp(word, "unset") == 1)
 		return (1);
-	else if (str_compare(word, "exit") == 1)
+	else if (str_cmp(word, "exit") == 1)
 		return (1);
-	else if (str_compare(word, "pwd") == 1)
+	else if (str_cmp(word, "pwd") == 1)
 		return (1);
-	else if (str_compare(word, "history") == 1)
+	else if (str_cmp(word, "history") == 1)
 		return (1);
 	else 
 		return (0);
 }
 
-void	select_token_type(t_token *token, char *word)
+void	select_type(t_token *token, char *word)
 {
-	if (word == NULL)
-		token->token_type = TK_EMPTY;
+	if (word[0] == '\0')
+		token->type = EMPTY;
 	else if (word[0] == 47)
-		token->token_type = TK_PATH;
+		token->type = PATH;
 	else if (is_builtin_cmd(word) == 1)
-		token->token_type = TK_CMD_BUILT;
+		token->type = BUILT;
 	else if (not_builtin_cmd(word) == 1)
-		token->token_type = TK_CMD_NOBUILT;
+		token->type = NOBUILT;
 	else if (word[0] == '-' && ft_isalpha(word[1]) == 1)
-		token->token_type = TK_FLAG;
-	else if (word[0] == '|')
-		token->token_type = TK_PIPE;
-	else if (word[0] == '>')
-	{
-		if (word[1] == '>')
-			token->token_type = TK_APPEND;
-		else
-			token->token_type = TK_TRUNC;
-	}
-	else if (word[0] == '<')
-		token->token_type = TK_INPUT;
+		token->type = FLAG;
+	else if (str_cmp(word, "|") == 1)
+		token->type = PIPE;
+	else if (str_cmp(word, ">") == 1)
+		token->type = TRUNC;
+	else if (str_cmp(word, ">>") == 1)
+		token->type = APPEND;
+	else if (str_cmp(word, "<") == 1)
+		token->type = INPUT;
+	else if (str_cmp(word, "<<") == 1)
+		token->type = HDOC;
 	else
-		token->token_type = TK_ARG;
+		token->type = ARG;
 }
 
 void	parsing(t_env *e)
@@ -87,8 +88,22 @@ void	parsing(t_env *e)
 	char **cmd_line;
 
 	cmd_line = ft_split(e->line, ' ');
-	init_tokens(e, cmd_line);
-	// print_matrix(cmd_line);
-	print_tokens(e->tokens);
-	free_matrix(cmd_line);
+	if (cmd_line[0] == NULL)
+	{
+		free_matrix(cmd_line);
+		return ;
+	}
+	else
+	{
+		init_tokens(e, cmd_line);
+		if (e->tokens->type == NOBUILT || e->tokens->type == PATH)
+			cmd_path(e);
+		else
+			if (e->cmd_path != NULL)
+			{
+				free(e->cmd_path);
+				e->cmd_path = NULL;
+			}
+		free_matrix(cmd_line);
+	}
 }

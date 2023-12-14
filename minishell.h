@@ -6,7 +6,7 @@
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 17:25:13 by eraccane          #+#    #+#             */
-/*   Updated: 2023/11/21 22:57:55 by eraccane         ###   ########.fr       */
+/*   Updated: 2023/12/14 00:20:51 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,16 +142,17 @@ tputs = invia una sequenza di escape terminfo alla console.
 # include <fcntl.h>
 
 /* -- TOKEN TYPE -- */
-# define TK_EMPTY 0
-# define TK_PATH 1
-# define TK_CMD_BUILT 2
-# define TK_CMD_NOBUILT 3
-# define TK_FLAG 4
-# define TK_ARG 5
-# define TK_PIPE 6
-# define TK_TRUNC 7
-# define TK_APPEND 8
-# define TK_INPUT 9
+# define EMPTY 0
+# define PATH 1
+# define BUILT 2
+# define NOBUILT 3
+# define FLAG 4
+# define ARG 5
+# define PIPE 6
+# define TRUNC 7
+# define APPEND 8
+# define INPUT 9
+# define HDOC 10
 
 /* -- STD -- */
 # define STDIN 0
@@ -166,8 +167,9 @@ tputs = invia una sequenza di escape terminfo alla console.
 
 typedef struct s_token {
 	char			*string;
-	int				token_type;
+	int				type;
 	struct s_token	*next;
+	struct s_token	*prev;
 }				t_token;
 
 typedef struct s_env {
@@ -175,50 +177,202 @@ typedef struct s_env {
 	char		*line;
 	char		*path;
 	char		*cmd_path;
+	char		**flag_matrix;
+	char		*hdoc_str;
 	int			exit_status;
-	HIST_ENTRY	**history;
+	int			exit; // 0 no exit - 1 exit
+	int			quotes;
+	int			flag_quotes;
+	int			pipe_quotes;
+	int			red_quotes;
+	int			redir;
+	int			quotes_open;
+	int			status;
+	int			hdoc;
+	int			count_pipe;
+	int			count_redir;
+	int			pipe_fd[2];
+	int			pid_pipe;
+	int			stdin;
+	int			stdout;
 	t_token		*tokens;
-}               t_env;
+}				t_env;
+
+/*
+** echo_2.c
+*/
+void	else_quotes_format(t_env *e);
+void	check_closure(t_env *e, t_token *tokens, char quote);
+void	quotes_format(t_env *e);
+int		check_redir(t_env *e);
+
+/*
+** echo.c
+*/
+void	echo_quotes(t_env *e, t_token *start);
+int		find_inenv(char **env, char *str);
+void	echo_expansion(t_env *e);
+void	last_echo_cmd(t_env *e);
+void	echo_cmd(t_env *e);
 
 /*
 ** env_function.c **
 */
-void	copy_env_line(char *dest, char *src);
+void	copy_line(char *dest, char *src);
 int		size_env(char **env);
 void	copy_env(t_env *e, char **env);
 void	print_env(char **env);
 void	init_env(t_env *e, char **env);
 
 /*
+** error_exit_2.c
+*/
+void    invalid_identif(t_env *e);
+
+/*
+** error_exit.c
+*/
+void	cmd_notfound(t_env *e);
+void	fdir_notfound(t_env *e, int type);
+void	too_many_args(t_env *e);
+void	too_few_args(t_env *e);
+void	exiting(t_env *e, int ex);
+
+/*
+** executing_2.c
+*/
+void	waiting(t_env *e, pid_t pid);
+void	exec_cmd(t_env *e);
+void	alloc_cmd_path(t_env *e);
+void	alloc_flagmatrix(t_env *e);
+void    nobuilt_command(t_env *e);
+
+/*
+** executing.c
+*/
+void	last_built_nobuilt(t_env *e);
+void	other_builtin_cmd(t_env *e);
+void	builtin_cmd(t_env *e);
+void	cmd_type(t_env *e);
+void	executing(t_env *e);
+
+/*
+** export_2.c
+*/
+char	**copy_env_temp(char **env, char **dest, char *str);
+char	**alloc_diff_var(char **env, char **tmp_e, char *str);
+void	over_exp_var(t_env *e, char *str);
+
+/*
+** export.c
+*/
+char	*rewrite_arg(char *str);
+int		exp_var_exists(t_env *e, char *str);
+void	export_var(t_env *e, char *str, int flag);
+void	parsing_exp_var(t_env *e);
+void	export_function(t_env *e);
+
+/*
 ** history.c **
 */
-void	print_history(t_env *e);
+void	print_history(void);
+
+/*
+** main.c
+*/
+int		pre_exec_2(t_env *e);
+void	pre_exec(t_env *e);
 
 /*
 ** parsing.c **
 */
 int		not_builtin_cmd(char *word);
 int		is_builtin_cmd(char *word);
-void	select_token_type(t_token *token, char *word);
+void	select_type(t_token *token, char *word);
 void	parsing(t_env *e);
 
 /*
 ** path_functions.c **
 */
 int		find_path(char *str);
+void	set_cmdpath(t_env *e, int i, int j);
 void	copy_path(t_env *e, int i, int j);
-void	cmd_path(t_env *e, int i, int j);
+void	cmd_path(t_env *e);
 void	search_path(t_env *e);
 
+/*
+** pipe_2.c
+*/
+void	update_pipe(t_env *e);
+void	parent_command(t_env *e);
+void	parent_process(t_env *e);
+void	fork_loop(t_env *e);
+
+/*
+** pipe.c
+*/
+void	multiple_pipe(t_env *e);
+void	piping(t_env *e);
+int		is_pipe_inquote(char *str);
+int		pipe_between(t_token *tk);
+int		count_pipe(t_env *e);
+
+/*
+** redir_hdoc.c
+*/
+int		check_error_red(int pipe_fd[2]);
+char	*update_buffer(char *line, char *buffer);
+void	print_hdoc_continue(t_env *e, char *s, int pipe_fd[2], pid_t pid);
+void	print_redir_hdoc(t_env *e, char *buffer);
+
+/*
+** redir_input.c
+*/
+void	input_continue_2(t_env *e, int fd, pid_t pid);
+void	input_continue(t_env *e, int fd);
+
+/*
+** redir_trunc.c
+*/
+void	fork_redir(t_env *e, char *filename, int type);
+void	redir_fork(t_env *e, char *filename, int type);
+
+/*
+** redirections.c
+*/
+int		count_redirection(t_env *e);
+void	redirect_trunc(t_env *e);
+void	redirect_append(t_env *e);
+void	redirect_input(t_env *e);
+void	redirect_hdoc(t_env *e);
 /*
 ** signals.c **
 */
 void	signals(t_env *e);
 void	ctrl_d(t_env *e);
+int		signals_hdoc(char *line, char *delimiter, char *buffer);
+
+/*
+** syntax_2.c
+*/
+t_token	*redir_in_quotes(t_env *e, t_token *tokens, int i);
+int		check_closure_redir(t_env *e, t_token *start, char quotes);
+t_token *quotes_redirect(t_env *e, t_token *start);
+int		check_closure_pipe(t_env *e, t_token *start, char quotes);
+
+/*
+** syntax.c
+*/
+int		search_pipe(t_env *e);
+int		invalid_pipe(t_env *e);
+int		invalid_cmd(t_env *e);
+int		invalid_syntax(t_env *e);
 
 /*
 ** token_funtions_2.c
 */
+t_token	*start_token(t_token *tokens);
+t_token	*find_first_token(t_token *token);
 void    print_tokens(t_token *tokens);
 
 /*
@@ -231,11 +385,64 @@ void	init_tokens(t_env *e, char **cmd_line);
 void	free_tokens(t_token **tokens);
 
 /*
+** unset.c
+*/
+int		unset_var_name(char *var_e, char *var);
+char	**unset_copy_env(char **env, char **dest, char *var);
+void	unset_function(t_env *e);
+
+/*
+** utils_6.c
+*/
+char	*ft_putstr(const char *s);
+char	*alloc_str(char *s);
+char	*ft_strcpy_n(char *dest, const char *src);
+void	continue_join_n(char *st, char *s1, char *s2);
+char	*ft_strjoin_n(char *s1, char *s2);
+
+/*
+** utils_5.c
+*/
+int		check_if_open(t_token *tokens, int start);
+int		is_redir_inquote(char *str);
+int		redir_between(t_env *e);
+int		last_redir(t_token *tokens);
+int		check_quotes_red(char *str, char quotes);
+
+/*
+** utils_4.c
+*/
+char	quote_type(char *str);
+void	redir_free(t_env *e);
+char	*find_filename(t_env *e);
+int		search_arrows(t_env *e);
+char	*put_cmd(t_env *e, char *cmd);
+
+/*
+** utils_3.c
+*/
+void	echo_print_str(char *str, int start);
+int		empty_cmd(t_env *e);
+int		count_flag(t_env *e);
+void	print_argtype(t_env *e);
+int		cmd_len(char *str);
+
+/*
+** utils_2.c
+*/
+int		find_dollar(char *str);
+int		check_equal(char *str);
+int		is_all_alpha(char *str);
+int		exp_var_name(char *var, char *newvar);
+int		env_var_len(char *str);
+
+/*
 ** utils.c **
 */
 void	print_matrix(char **matrix);
 void	free_matrix(char **str);
-void	*memdelete(void *ptr);
-int		str_compare(char *s1, char *s2);
+int		str_cmp(char *s1, char *s2);
+int		check_quotes_closed(char *str, int start);
+int		check_quotes(char *str);
 
 #endif

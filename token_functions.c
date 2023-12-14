@@ -6,7 +6,7 @@
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/20 23:58:20 by eraccane          #+#    #+#             */
-/*   Updated: 2023/11/21 22:42:01 by eraccane         ###   ########.fr       */
+/*   Updated: 2023/12/11 18:59:57 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,20 +29,29 @@ void	addback_token_node(t_token **token, t_token *new)
 	if (!last)
 		*token = new;
 	else
+	{
 		last->next = new;
+		last->next->prev = last;
+	}
 }
 
 t_token	*new_token_node(char *word)
 {
 	t_token	*token;
 
-	token = (t_token *)malloc(sizeof(t_token));
+	token = malloc(sizeof(t_token));
 	if (!token)
 		return (NULL);
 	token->string = (char *)malloc(sizeof(char) * ft_strlen(word) + 1);
+	if (!token->string)
+	{
+		free(token);
+		return (NULL);
+	}
 	ft_strlcpy(token->string, word, ft_strlen(word) + 1);
 	token->next = NULL;
-	select_token_type(token, word);
+	token->prev = NULL;
+	select_type(token, word);
 	return (token);
 }
 

@@ -6,7 +6,7 @@
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 16:58:18 by eraccane          #+#    #+#             */
-/*   Updated: 2023/11/21 19:18:17 by eraccane         ###   ########.fr       */
+/*   Updated: 2023/12/12 18:41:14 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	handle_signal(int sig)
 	{
 		sig_code = 130;
 		ioctl(STDIN_FILENO, TIOCSTI, "\n");
-		rl_replace_line("\n", 0);
+		rl_replace_line("^C\n", 0);
 		rl_on_new_line();
 	}
 }
@@ -47,6 +47,21 @@ void    ctrl_d(t_env *e)
 		free(e->line);
 	if (e->env != NULL)
 		free_matrix(e->env);
+	if (e->flag_matrix != NULL)
+		free_matrix(e->flag_matrix);
 	free(e);
 	exit(0);
 }
+
+int	signals_hdoc(char *line, char *delimiter, char *buffer)
+{
+	if (line == NULL)
+	{
+		printf("minishell: warning: here-document delimited by end-of-file ");
+		printf("(wanted '%s')\n", delimiter);
+		printf("%s", buffer);
+		return (1);
+	}
+	return (0);
+}
+	

@@ -22,3 +22,19 @@
 	fun:rl_initialize
 	fun:readline
 }
+{
+	readline
+	Memcheck:Leak
+	...
+	...
+	fun:add_history
+	fun:cmd_type
+}
+{
+	readline
+	Memcheck:Leak
+	...
+	...
+	fun:readline
+	fun:redirect_hdoc
+}
