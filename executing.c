@@ -6,7 +6,7 @@
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 20:12:06 by eraccane          #+#    #+#             */
-/*   Updated: 2023/12/14 12:02:22 by eraccane         ###   ########.fr       */
+/*   Updated: 2023/12/17 12:28:03 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	last_built_nobuilt(t_env *e)
 {
 	if (str_cmp(e->tokens->string, "echo"))
 	{
-		if (e->tokens->next == NULL)
+		if (e->tokens->next == NULL || e->hdoc == 1)
 		{
 			printf("\n");
 			return ;
@@ -136,7 +136,7 @@ void	executing(t_env *e)
         else if (search_arrows(e) == INPUT && e->redir == 1)
             redirect_input(e);
         else if (search_arrows(e) == HDOC && e->redir == 1)
-            redirect_hdoc(e);
+            redirect_hdoc(e, 1);
         else if (e->tokens->type == BUILT || \
             e->tokens->type == NOBUILT || e->tokens->type == PATH)
             cmd_type(e);

@@ -6,11 +6,25 @@
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/12 16:47:18 by eraccane          #+#    #+#             */
-/*   Updated: 2023/12/13 01:20:18 by eraccane         ###   ########.fr       */
+/*   Updated: 2023/12/17 12:27:30 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+char	*find_delim(t_env *e)
+{
+	t_token	*tokens;
+
+	tokens = start_token(e->tokens);
+	while (tokens != NULL)
+	{
+		if (tokens->type == HDOC && tokens->next != NULL)
+			return (tokens->next->string);
+		tokens = tokens->next;
+	}
+	return (NULL);
+}
 
 int	check_error_red(int pipe_fd[2])
 {

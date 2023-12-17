@@ -6,7 +6,7 @@
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 17:25:13 by eraccane          #+#    #+#             */
-/*   Updated: 2023/12/14 12:19:05 by eraccane         ###   ########.fr       */
+/*   Updated: 2023/12/18 00:41:04 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -286,11 +286,28 @@ int					pre_exec_2(t_env *e);
 void				pre_exec(t_env *e);
 
 /*
+** multiple_redirect_3.c
+*/
+void	mult_c_process(t_env *e, int fd_in, int fd_out, pid_t pid);
+void	mult_p_process(t_env *e, t_token *last_in, t_token *last_out);
+
+/*
+** multiple_redirect_2.c
+*/
+int					find_file_redir(t_env *e, t_token *start);
+int					mult_redir_between(t_token *tk);
+void				mult_in_redir(t_env *e, t_token *last_in);
+int					multiple_choice(t_env *e, t_token *start);
+void				mult_mix_redir(t_env *e, t_token *last_in, t_token *last_out);
+
+/*
 ** multiple_redirect.c
 */
-t_token	*find_last_out(t_env *e);
-t_token	*find_last_in(t_env *e);
-void	multiple_redir(t_env *e);
+t_token				*find_last_out(t_env *e);
+t_token				*find_last_in(t_env *e);
+void				create_file_redir(t_env *e, t_token *start);
+void				mult_out_redir(t_env *e, t_token *last_out);
+void				multiple_redir(t_env *e);
 
 /*
 ** parsing.c **
@@ -329,6 +346,7 @@ int					count_pipe(t_env *e);
 /*
 ** redir_hdoc.c
 */
+char				*find_delim(t_env *e);
 int					check_error_red(int pipe_fd[2]);
 char				*update_buffer(char *line, char *buffer);
 void				print_hdoc_continue(t_env *e, char *s, int pipe_fd[2],
@@ -350,11 +368,12 @@ void				redir_fork(t_env *e, char *filename, int type);
 /*
 ** redirections.c
 */
-int					count_redirection(t_env *e);
+
 void				redirect_trunc(t_env *e);
 void				redirect_append(t_env *e);
 void				redirect_input(t_env *e);
-void				redirect_hdoc(t_env *e);
+void				redirect_hdoc(t_env *e, int type);
+
 /*
 ** signals.c **
 */
@@ -400,6 +419,11 @@ void				free_tokens(t_token **tokens);
 int					unset_var_name(char *var_e, char *var);
 char				**unset_copy_env(char **env, char **dest, char *var);
 void				unset_function(t_env *e);
+
+/*
+** utils_7.c
+*/
+int					count_redirection(t_env *e);
 
 /*
 ** utils_6.c

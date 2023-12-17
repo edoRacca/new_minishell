@@ -6,27 +6,18 @@
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 16:50:41 by eraccane          #+#    #+#             */
-/*   Updated: 2023/12/14 12:00:44 by eraccane         ###   ########.fr       */
+/*   Updated: 2023/12/16 10:56:12 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	count_redirection(t_env *e)
+void	hdoc_condition(t_env *e, char *buffer, int type)
 {
-	t_token	*tokens;
-
-	e->count_redir = 0;
-	tokens = start_token(e->tokens);
-	while (tokens != NULL)
-	{
-		if (tokens->type == APPEND || tokens->type == TRUNC || \
-        tokens->type == INPUT || tokens->type == HDOC)
-			if (redir_between(e) == 0)
-				e->count_redir++; 
-		tokens = tokens->next;
-	}
-	return (e->count_redir);
+	if (type == 1)
+		print_redir_hdoc(e, buffer);
+	else
+		free(buffer);
 }
 
 void	redirect_trunc(t_env *e)
@@ -61,6 +52,12 @@ void	redirect_append(t_env *e)
 	char	*filename;
 	int		fd;
 
+	if (e->tokens->type != NOBUILT && e->tokens->type != BUILT && \
+		e->tokens->type != TRUNC)
+	{
+		cmd_notfound(e);
+		return ;
+	}
 	filename = find_filename(e);
 	if (find_first_token(e->tokens)->type == APPEND)
 	{
@@ -95,25 +92,25 @@ void	redirect_input(t_env *e)
 	close(fd);
 }
 
-void	redirect_hdoc(t_env *e)
+void	redirect_hdoc(t_env *e, int type)
 {
 	char	*delim;
 	char	*line;
 	char	*buffer;
 
-	delim = find_filename(e);
+	delim = find_delim(e);
 	line = NULL;
 	buffer = NULL;
 	e->hdoc = 1;
 	while (1)
 	{
-		line = readline("heredoc > ");
+		line = readline("heredoc> ");
 		signals(e);
 		if (signals_hdoc(line, delim, buffer) == 1)
 			break ;
 		else if (str_cmp(delim, line) == 1)
 		{
-			print_redir_hdoc(e, buffer);
+			hdoc_condition(e, buffer, type);
 			break ;
 		}
 		else

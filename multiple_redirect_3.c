@@ -1,23 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   redir_input.c                                      :+:      :+:    :+:   */
+/*   multiple_redirect_3.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/12 12:18:14 by eraccane          #+#    #+#             */
-/*   Updated: 2023/12/18 00:16:04 by eraccane         ###   ########.fr       */
+/*   Created: 2023/12/17 17:30:29 by eraccane          #+#    #+#             */
+/*   Updated: 2023/12/18 00:40:46 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	input_continue_2(t_env *e, int fd, pid_t pid)
+void	mult_c_process(t_env *e, int fd_in, int fd_out, pid_t pid)
 {
 	if (pid == 0)
 	{
-		dup2(fd, STDIN_FILENO);
-		close(fd);
+		dup2(fd_in, STDIN_FILENO);
+		dup2(fd_out, STDOUT_FILENO);
+		close(fd_in);
+		close(fd_out);
 		if (e->cmd_path != NULL)
 			if (access(e->cmd_path, X_OK) == 0 && e->tokens->type == NOBUILT)
 			{
@@ -30,14 +32,19 @@ void	input_continue_2(t_env *e, int fd, pid_t pid)
 	}
 	else
 		waitpid(pid, NULL, 0);
-	e->exit = 1;
 }
 
-void	input_continue(t_env *e, int fd)
+void	mult_p_process(t_env *e, t_token *last_in, t_token *last_out)
 {
+	int		fd_in;
+	int		fd_out;
 	pid_t	pid;
 
-	if (e->tokens->type == INPUT)
+	if (last_in->type == INPUT)
+		fd_in = open(last_in->next->string, O_RDONLY);
+	fd_out = open(last_out->next->string, O_WRONLY | O_APPEND | O_CREAT, 0666);
+	if (e->tokens->type == TRUNC || e->tokens->type == APPEND || \
+	e->tokens->type == INPUT || e->tokens->type == HDOC)
 		return ;
 	if (e->tokens->type == NOBUILT)
 	{
@@ -52,6 +59,6 @@ void	input_continue(t_env *e, int fd)
 		e->exit = 1;
 		exiting(e, 1);
 	}
-	else
-		input_continue_2(e, fd, pid);
+	else 
+		mult_c_process(e, fd_in, fd_out, pid);
 }
