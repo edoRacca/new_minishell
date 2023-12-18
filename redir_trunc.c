@@ -6,7 +6,7 @@
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 17:52:18 by eraccane          #+#    #+#             */
-/*   Updated: 2023/12/13 23:50:45 by eraccane         ###   ########.fr       */
+/*   Updated: 2023/12/18 19:24:39 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,20 +14,18 @@
 
 void	fork_redir(t_env *e, char *filename, int type)
 {
-	int	fd;
-
 	if (type == TRUNC)
-		fd = open(filename, O_WRONLY | O_TRUNC | O_CREAT, 0666);
+		e->fd_redir = open(filename, O_WRONLY | O_TRUNC | O_CREAT, 0666);
 	else if (type == APPEND)
-		fd = open(filename, O_WRONLY | O_APPEND | O_CREAT, 0666);
-	if (fd < 0)
+		e->fd_redir = open(filename, O_WRONLY | O_APPEND | O_CREAT, 0666);
+	if (e->fd_redir < 0)
 	{
 		e->exit_status = 1;
 		perror("open");
 		exiting(e, 0);
 	}
-	dup2(fd, 1);
-	close(fd);
+	dup2(e->fd_redir, 1);
+	close(e->fd_redir);
 	if (e->cmd_path != NULL)
 		if (access(e->cmd_path, X_OK) == 0 && e->tokens->type == NOBUILT)
 		{

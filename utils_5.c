@@ -6,7 +6,7 @@
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/10 23:07:57 by eraccane          #+#    #+#             */
-/*   Updated: 2023/12/12 11:43:48 by eraccane         ###   ########.fr       */
+/*   Updated: 2023/12/18 20:54:37 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ int	redir_between(t_env *e)
 
 int	last_redir(t_token *tokens)
 {
-	while (tokens != NULL)
+	while (tokens != NULL && tokens->type != PIPE)
 	{
 		if (tokens->type == INPUT || tokens->type == APPEND || \
 			tokens->type == TRUNC)

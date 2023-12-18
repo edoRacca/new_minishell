@@ -6,7 +6,7 @@
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 16:49:45 by eraccane          #+#    #+#             */
-/*   Updated: 2023/12/18 12:51:07 by eraccane         ###   ########.fr       */
+/*   Updated: 2023/12/18 17:35:39 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,9 +51,6 @@ void	piping(t_env *e)
 		e->tokens = update_pipe(e);
 	}
 	parent_process(e);
-	dup2(e->stdin, STDIN_FILENO);
-	close(e->stdin);
-	dup2(e->stdout, STDOUT_FILENO);
 }
 
 int	is_pipe_inquote(char *str)

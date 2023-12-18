@@ -6,7 +6,7 @@
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/19 10:39:27 by eraccane          #+#    #+#             */
-/*   Updated: 2023/12/12 22:54:56 by eraccane         ###   ########.fr       */
+/*   Updated: 2023/12/18 19:17:53 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,9 @@ int	not_builtin_cmd(char *word)
 		return (1);
 	else if (str_cmp(word, "clear") == 1)
 		return (1);
+    else if (str_cmp(word, "wc") == 1)
+		return (1);
+
 	else
 		return (0);
 }
@@ -96,14 +99,13 @@ void	parsing(t_env *e)
 	else
 	{
 		init_tokens(e, cmd_line);
-		if (e->tokens->type == NOBUILT || e->tokens->type == PATH)
-			cmd_path(e);
-		else
-			if (e->cmd_path != NULL)
-			{
-				free(e->cmd_path);
-				e->cmd_path = NULL;
-			}
+		cmd_path(e);
+        if (e->cmd_path != NULL && e->tokens->type != PATH && \
+        e->tokens->type != NOBUILT)
+        {
+            free(e->cmd_path);
+            e->cmd_path = NULL;
+        }
 		free_matrix(cmd_line);
 	}
 }

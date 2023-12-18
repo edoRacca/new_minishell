@@ -6,7 +6,7 @@
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 23:47:00 by eraccane          #+#    #+#             */
-/*   Updated: 2023/12/14 11:36:57 by eraccane         ###   ########.fr       */
+/*   Updated: 2023/12/18 21:16:09 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,7 @@ t_token	*update_pipe(t_env *e)
 	tokens = start_token(e->tokens);
 	while (e->tokens != NULL)
 	{
-		while (tokens != NULL && tokens->type != PIPE && \
-		tokens->type != TRUNC && tokens->type != APPEND && \
-		tokens->type != INPUT)
+		while (tokens != NULL && tokens->type != PIPE)
 			tokens = tokens->next;
 		if (tokens == NULL)
 			return (last_cmd);

@@ -1,0 +1,13 @@
+Pipes + redirection:
+Redirection hanno priorita, nel senso che decidono dove redirigere l'output
+
+IMPORTANTE: al momento del processo di una pipe viene fatto un fork(), la redirection viene controllata dentro al processo figlio. Forse meglio fare o la redirection e redirezionare la lettura su quell'fd oppure la pipe se non ci sono redirections?
+
+1. Faccio come nella pipe multipla
+2. Quando tra la pipe trovo una redirection cambio la lettura del pipe sulla redirection
+		es.: fd[red1] fd[pipe2]
+	Poi se e una redirection di output (<) lui non ricevera input dalla redirection perche quello viene rediretto su un file e troncato l'output
+	Se invece e una redirect di input (<) cambio l'fd di lettura che sara la redirection e il pipe poi si comporta di default
+	NB: echo 42 ->|-> wc -l ->|-> cat < file1
+		echo 42 ->|-> wc -l > file1 x|-> cat < file ---> non verra preso in input da cat nulla perche l'output della redirection andra a finire su 'file1' 
+

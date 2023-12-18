@@ -6,7 +6,7 @@
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/12 12:18:14 by eraccane          #+#    #+#             */
-/*   Updated: 2023/12/18 00:16:04 by eraccane         ###   ########.fr       */
+/*   Updated: 2023/12/18 21:14:39 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,12 @@ void	input_continue(t_env *e, int fd)
 
 	if (e->tokens->type == INPUT)
 		return ;
+	if (e->tokens->type != BUILT && \
+	e->tokens->type != NOBUILT && e->tokens->type != PATH)
+	{
+		cmd_notfound(e);
+		return ;
+	}
 	if (e->tokens->type == NOBUILT)
 	{
 		redir_free(e);

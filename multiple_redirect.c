@@ -6,7 +6,7 @@
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/14 11:45:38 by eraccane          #+#    #+#             */
-/*   Updated: 2023/12/17 12:33:54 by eraccane         ###   ########.fr       */
+/*   Updated: 2023/12/18 16:28:34 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ t_token	*find_last_out(t_env *e)
 	t_token	*tokens;
 
 	tokens = find_last_token(e->tokens);
-	while (tokens != NULL)
+	while (tokens != NULL && tokens->type != PIPE)
 	{
 		if (tokens->type == APPEND || tokens->type == TRUNC)
 			return (tokens);
@@ -31,7 +31,7 @@ t_token	*find_last_in(t_env *e)
 	t_token	*tokens;
 
 	tokens = find_last_token(e->tokens);
-	while (tokens != NULL)
+	while (tokens != NULL && tokens->type != PIPE)
 	{
 		if (tokens->type == INPUT || tokens->type == HDOC)
 			return (tokens);

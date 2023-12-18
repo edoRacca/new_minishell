@@ -6,7 +6,7 @@
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 10:58:38 by eraccane          #+#    #+#             */
-/*   Updated: 2023/12/12 17:50:05 by eraccane         ###   ########.fr       */
+/*   Updated: 2023/12/18 20:52:06 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ char	*find_filename(t_env *e)
 	t_token	*tokens;
 
 	tokens = start_token(e->tokens);
-	while (tokens != NULL) 
+	while (tokens != NULL && tokens->type != PIPE) 
 	{
 		if ((tokens->type == APPEND || tokens->type == TRUNC \
 			|| tokens->type == INPUT || tokens->type == HDOC) && \

@@ -6,7 +6,7 @@
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/16 10:52:17 by eraccane          #+#    #+#             */
-/*   Updated: 2023/12/16 10:52:34 by eraccane         ###   ########.fr       */
+/*   Updated: 2023/12/18 20:33:12 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	count_redirection(t_env *e)
 
 	e->count_redir = 0;
 	tokens = start_token(e->tokens);
-	while (tokens != NULL)
+	while (tokens != NULL && tokens->type != PIPE)
 	{
 		if (tokens->type == APPEND || tokens->type == TRUNC || \
 		tokens->type == INPUT || tokens->type == HDOC)

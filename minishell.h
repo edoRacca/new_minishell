@@ -6,7 +6,7 @@
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 17:25:13 by eraccane          #+#    #+#             */
-/*   Updated: 2023/12/18 12:42:14 by eraccane         ###   ########.fr       */
+/*   Updated: 2023/12/18 18:34:21 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,11 +165,6 @@ tputs = invia una sequenza di escape terminfo alla console.
 # define DIRECTORY 126
 # define UNKNOWN_CMD 127
 
-typedef struct s_pipefd
-{
-	int				readfd;
-	int				writefd;
-}				t_pipefd;
 
 typedef struct s_token
 {
@@ -201,6 +196,7 @@ typedef struct s_env
 	int				count_redir;
 	int				pipe_fd[2];
 	int				pid_pipe;
+	int				fd_redir;
 	int				stdin;
 	int				stdout;
 	t_token			*tokens;
@@ -335,9 +331,18 @@ void				cmd_path(t_env *e);
 void				search_path(t_env *e);
 
 /*
+** pipe_redir_2.c
+*/
+void				pipered_p_process(t_env *e);
+
+/*
 ** pipe_redir.c
 */
-void	pipe_redirection(t_env *e);
+t_token				*update_pipe_redir(t_env *e);
+int					count_red_inpipe(t_env *e);
+void				pipe_redir_fork(t_env *e);
+void				mult_pipe_redir(t_env *e);
+void				pipe_redirection(t_env *e);
 
 /*
 ** pipe_2.c

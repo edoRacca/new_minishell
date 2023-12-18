@@ -6,7 +6,7 @@
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 11:41:45 by eraccane          #+#    #+#             */
-/*   Updated: 2023/12/18 13:28:25 by eraccane         ###   ########.fr       */
+/*   Updated: 2023/12/18 21:06:21 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,22 +26,22 @@ t_token	*update_pipe_redir(t_env *e)
 			return (last_cmd);
 		last_cmd = start_token(tokens);
 		if (tokens != NULL)
-			return(tokens->next);
+			return (tokens->next);
 	}
 	return (last_cmd);
 }
 
-int	find_red_inpipe(t_env *e)
+int	count_red_inpipe(t_env *e)
 {
 	t_token	*start;
 	int		count;
 
 	start = start_token(e->tokens);
 	count = 0;
-	while (start->type != PIPE && start != NULL)
+	while (start != NULL && start->type != PIPE)
 	{
-		if (start->type == APPEND || start->type == TRUNC || \
-		start->type == INPUT)
+		if (start->type == APPEND || start->type == TRUNC
+			|| start->type == INPUT)
 			count++;
 		start = start->next;
 	}
@@ -51,12 +51,30 @@ int	find_red_inpipe(t_env *e)
 void	pipe_redir_fork(t_env *e)
 {
 	close(e->pipe_fd[0]);
-	dup2(e->pipe_fd[1], STDOUT_FILENO);
-	close(e->pipe_fd[1]);
-	if (find_red_inpipe(e) > 0)
+	if (count_red_inpipe(e) > 0)
 	{
-		
+		executing(e);
+		// dup2(e->pipe_fd[1], e->fd_redir);
+		// close(e->pipe_fd[1]);
 	}
+	else if (e->tokens->type == NOBUILT || e->tokens->type == PATH)
+	{
+		dup2(e->pipe_fd[1], STDOUT_FILENO);
+		close(e->pipe_fd[1]);
+		redir_free(e);
+		alloc_flagmatrix(e);
+		alloc_cmd_path(e);
+		if (access(e->cmd_path, X_OK) == 0)
+		{
+			execve(e->cmd_path, e->flag_matrix, e->env);
+			perror("execve");
+			exiting(e, 1);
+		}
+		exiting(e, 0);
+	}
+	else
+		cmd_type(e);
+	exiting(e, 0);
 }
 
 void	mult_pipe_redir(t_env *e)
@@ -81,25 +99,27 @@ void	mult_pipe_redir(t_env *e)
 }
 
 void	pipe_redirection(t_env *e)
-{	
-	int			i;
+{
+	int	i;
 
 	i = 0;
 	while (i < e->count_pipe)
 	{
-		printf("tokens: %s\n\n", e->tokens->string);
 		if (pipe(e->pipe_fd) == -1)
 		{
 			perror("pipe");
 			exiting(e, 1);
 		}
-		// mult_pipe_redir(e);
+		cmd_path(e);
+		mult_pipe_redir(e);
 		i++;
 		e->tokens = update_pipe(e);
 	}
-	// parent process
-	// dup2(e->stdin, STDIN_FILENO);
-	// close(e->stdin);
-	// dup2(e->stdout, STDOUT_FILENO);
+	cmd_path(e);
+	pipered_p_process(e);
+	dup2(e->stdin, STDIN_FILENO);
+	close(e->stdin);
+	dup2(e->stdout, STDOUT_FILENO);
+	close(e->stdout);
 	e->exit = 1;
 }

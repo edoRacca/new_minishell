@@ -6,7 +6,7 @@
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 16:50:41 by eraccane          #+#    #+#             */
-/*   Updated: 2023/12/16 10:56:12 by eraccane         ###   ########.fr       */
+/*   Updated: 2023/12/18 18:42:15 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ void	hdoc_condition(t_env *e, char *buffer, int type)
 void	redirect_trunc(t_env *e)
 {
 	char	*filename;
-	int		fd;
 
 	if (e->tokens->type != NOBUILT && e->tokens->type != BUILT && \
 	e->tokens->type != TRUNC)
@@ -34,13 +33,13 @@ void	redirect_trunc(t_env *e)
 	filename = find_filename(e);
 	if (find_first_token(e->tokens)->type == TRUNC)
 	{
-		fd = open(filename, O_WRONLY | O_TRUNC | O_CREAT, 0666);
-		if (fd < 0)
+		e->fd_redir = open(filename, O_WRONLY | O_TRUNC | O_CREAT, 0666);
+		if (e->fd_redir < 0)
 		{
 			e->exit_status = 1;
 			perror("open");
 		}
-		close(fd);
+		close(e->fd_redir);
 		e->exit = 1;
 	}
 	else
@@ -50,7 +49,6 @@ void	redirect_trunc(t_env *e)
 void	redirect_append(t_env *e)
 {
 	char	*filename;
-	int		fd;
 
 	if (e->tokens->type != NOBUILT && e->tokens->type != BUILT && \
 		e->tokens->type != TRUNC)
@@ -61,13 +59,13 @@ void	redirect_append(t_env *e)
 	filename = find_filename(e);
 	if (find_first_token(e->tokens)->type == APPEND)
 	{
-		fd = open(filename, O_WRONLY | O_APPEND | O_CREAT, 0666);
-		if (fd < 0)
+		e->fd_redir = open(filename, O_WRONLY | O_APPEND | O_CREAT, 0666);
+		if (e->fd_redir < 0)
 		{
 			e->exit_status = 1;
 			perror("open");
 		}
-		close(fd);
+		close(e->fd_redir);
 		e->exit = 1;
 	}
 	else
@@ -76,20 +74,19 @@ void	redirect_append(t_env *e)
 
 void	redirect_input(t_env *e)
 {
-	int		fd;
 	char	*filename;
 
 	filename = find_filename(e);
-	fd = open(filename, O_RDONLY);
-	if (fd < 0)
+	e->fd_redir = open(filename, O_RDONLY);
+	if (e->fd_redir < 0)
 	{
 		perror("open");
 		e->exit = 1;
 		return ;
 	}
-	input_continue(e, fd);
+	input_continue(e, e->fd_redir);
 	e->exit = 1;
-	close(fd);
+	close(e->fd_redir);
 }
 
 void	redirect_hdoc(t_env *e, int type)
