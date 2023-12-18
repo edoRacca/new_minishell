@@ -6,7 +6,7 @@
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 17:25:13 by eraccane          #+#    #+#             */
-/*   Updated: 2023/12/18 00:41:04 by eraccane         ###   ########.fr       */
+/*   Updated: 2023/12/18 12:42:14 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,6 +165,12 @@ tputs = invia una sequenza di escape terminfo alla console.
 # define DIRECTORY 126
 # define UNKNOWN_CMD 127
 
+typedef struct s_pipefd
+{
+	int				readfd;
+	int				writefd;
+}				t_pipefd;
+
 typedef struct s_token
 {
 	char			*string;
@@ -288,8 +294,9 @@ void				pre_exec(t_env *e);
 /*
 ** multiple_redirect_3.c
 */
-void	mult_c_process(t_env *e, int fd_in, int fd_out, pid_t pid);
-void	mult_p_process(t_env *e, t_token *last_in, t_token *last_out);
+void				mult_c_process(t_env *e, int fd_in, int fd_out, pid_t pid);
+void				mult_p_process(t_env *e, t_token *last_in,
+						t_token *last_out);
 
 /*
 ** multiple_redirect_2.c
@@ -298,7 +305,8 @@ int					find_file_redir(t_env *e, t_token *start);
 int					mult_redir_between(t_token *tk);
 void				mult_in_redir(t_env *e, t_token *last_in);
 int					multiple_choice(t_env *e, t_token *start);
-void				mult_mix_redir(t_env *e, t_token *last_in, t_token *last_out);
+void				mult_mix_redir(t_env *e, t_token *last_in,
+						t_token *last_out);
 
 /*
 ** multiple_redirect.c
@@ -325,6 +333,11 @@ void				set_cmdpath(t_env *e, int i, int j);
 void				copy_path(t_env *e, int i, int j);
 void				cmd_path(t_env *e);
 void				search_path(t_env *e);
+
+/*
+** pipe_redir.c
+*/
+void	pipe_redirection(t_env *e);
 
 /*
 ** pipe_2.c

@@ -6,7 +6,7 @@
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 18:14:15 by eraccane          #+#    #+#             */
-/*   Updated: 2023/12/14 00:41:42 by eraccane         ###   ########.fr       */
+/*   Updated: 2023/12/18 13:27:15 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,8 @@ int	pre_exec_2(t_env *e)
 	else if (search_pipe(e) == 1)
 	{
 		count_pipe(e);
-		if (search_arrows(e) == TRUNC || search_arrows(e) == APPEND || \
-		search_arrows(e) == INPUT || search_arrows(e) == HDOC)
-			printf("ciao\n");// redirection_pipe(e);
+		if (count_redirection(e) > 0)
+			pipe_redirection(e);
 		else
 			piping(e);
 		e->exit = 1;
