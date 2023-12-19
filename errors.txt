@@ -1,0 +1,811 @@
+TEST 4: KO
+    Input:        [echo 42   42    '  '42]
+    Bash:         [42 42   42]
+    Minishell:    [42 42  42]
+
+----------------------------------------------------------------------
+
+TEST 6: KO
+    Input:        [echo ' "" ' '42']
+    Bash:         [ ""  42]
+    Minishell:    [   42]
+
+----------------------------------------------------------------------
+
+TEST 18: KO
+    Input:        [echo " "'$USER"'"42 " ''"  | << -1"]
+    Bash:         [ $USER"42    | << -1]
+    Minishell:    [minishell: syntax error near |]
+
+----------------------------------------------------------------------
+
+TEST 21: KO
+    Input:        [echo $HOME$HOME]
+    Bash:         [/nfs/homes/eraccane/nfs/homes/eraccane]
+    Minishell:    []
+
+----------------------------------------------------------------------
+
+TEST 22: KO
+    Input:        [echo $USER'$USER']
+    Bash:         [eraccane$USER]
+    Minishell:    [$USER$USER]
+
+----------------------------------------------------------------------
+
+TEST 25: KO
+    Input:        [echo '$USER "$HOME"']
+    Bash:         [$USER "$HOME"]
+    Minishell:    [$USER /nfs/homes/eraccane]
+
+----------------------------------------------------------------------
+
+TEST 26: KO
+    Input:        [echo $USER '>> file.txt' "|"]
+    Exception:    Segmentation fault
+
+----------------------------------------------------------------------
+
+TEST 27: KO
+    Input:        [echo '42 $USER' ">" file.txt]
+    Exception:    Segmentation fault
+
+----------------------------------------------------------------------
+
+TEST 30: KO
+    Input:        [echo ''""'"'"'"]
+    Bash:         ["']
+    Minishell:    ["""""]
+
+----------------------------------------------------------------------
+
+TEST 32: KO
+    Input:        [/usr/bin/ls -al]
+    Bash:         [total 28\ndrwx------   2 eraccane 2022_firenze  4096 Dec 19 16:10 .\ndrwxrwxrwt 186 root     root         24576 Dec 19 16:10 ..]
+    Minishell:    [Command: /usr/bin/ls not found\n$> \n$> ]
+
+----------------------------------------------------------------------
+
+TEST 33: KO
+    Input:        [/usr/bin/ls -al -i]
+    Bash:         [total 28\n5112055 drwx------   2 eraccane 2022_firenze  4096 Dec 19 16:10 .\n4718593 drwxrwxrwt 186 root     root         24576 Dec 19 16:10 ..]
+    Minishell:    [Command: /usr/bin/ls not found\n$> \n$> ]
+
+----------------------------------------------------------------------
+
+TEST 34: KO
+    Input:        [/usr/bin/ls -al -i -t]
+    Bash:         [total 28\n5112057 drwx------   2 eraccane 2022_firenze  4096 Dec 19 16:10 .\n4718593 drwxrwxrwt 186 root     root         24576 Dec 19 16:10 ..]
+    Minishell:    [Command: /usr/bin/ls not found\n$> \n$> ]
+
+----------------------------------------------------------------------
+
+TEST 35: KO
+    Input:        [/usr/bin/ls -al -i -t -v]
+    Bash:         [total 28\n5112055 drwx------   2 eraccane 2022_firenze  4096 Dec 19 16:10 .\n4718593 drwxrwxrwt 186 root     root         24576 Dec 19 16:10 ..]
+    Minishell:    [Command: /usr/bin/ls not found\n$> \n$> ]
+
+----------------------------------------------------------------------
+
+TEST 36: KO
+    Input:        [/usr/bin/wc -l /etc/passwd]
+    Bash:         [55 /etc/passwd]
+    Minishell:    [Command: /usr/bin/wc not found]
+
+----------------------------------------------------------------------
+
+TEST 37: KO
+    Input:        [/usr/bin/wc -l /etc/passwd -m]
+    Bash:         [  55 3272 /etc/passwd]
+    Minishell:    [Command: /usr/bin/wc not found]
+
+----------------------------------------------------------------------
+
+TEST 38: KO
+    Input:        [/usr/bin/wc -l /etc/passwd -m -w]
+    Bash:         [  55   97 3272 /etc/passwd]
+    Minishell:    [Command: /usr/bin/wc not found]
+
+----------------------------------------------------------------------
+
+TEST 39: KO
+    Input:        [/usr/bin/wc -l /etc/passwd -m -w -c]
+    Bash:         [  55   97 3272 3272 /etc/passwd]
+    Minishell:    [Command: /usr/bin/wc not found]
+
+----------------------------------------------------------------------
+
+TEST 40: KO
+    Input:        [/usr/bin/wc -l /etc/passwd -m -w -c -l]
+    Bash:         [  55   97 3272 3272 /etc/passwd]
+    Minishell:    [Command: /usr/bin/wc not found]
+
+----------------------------------------------------------------------
+
+TEST 51: KO
+    Input:        [which ls]
+    Bash:         [/usr/bin/ls]
+    Minishell:    [Command: which not found]
+
+----------------------------------------------------------------------
+
+TEST 94: KO
+    Input:        [ls / | head -n 5]
+    Bash:         [bin\nboot\ndev\netc\ngoinfre]
+    Minishell:    [Command: head not found\n$> ]
+
+    Lab creation:
+        cat 1 > file1
+        cat 2 > file2
+        cat 3 > file3
+        cat 4 > file4
+
+    Files content - Bash:
+        file1: [1]
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+    Files content - Minishell:
+        file1: [1]
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+----------------------------------------------------------------------
+
+TEST 99: KO
+    Input:        [echo "Hello, World!" | wc -w]
+    Bash:         [2]
+    Minishell:    []
+
+    Lab creation:
+        cat 1 > file1
+        cat 2 > file2
+        cat 3 > file3
+        cat 4 > file4
+
+    Files content - Bash:
+        file1: [1]
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+    Files content - Minishell:
+        file1: [1]
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+----------------------------------------------------------------------
+
+TEST 100: KO
+    Input:        [echo "Hello, World!" | sed 's/World/Universe/g']
+    Bash:         [Hello, Universe!]
+    Minishell:    []
+
+    Lab creation:
+        cat 1 > file1
+        cat 2 > file2
+        cat 3 > file3
+        cat 4 > file4
+
+    Files content - Bash:
+        file1: [1]
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+    Files content - Minishell:
+        file1: [1]
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+----------------------------------------------------------------------
+
+TEST 101: KO
+    Input:        [echo "Hello, World!" | cut -d " " -f 4]
+    Bash:         []
+    Minishell:    [Hello, World! | cut -d   -f 4]
+
+    Lab creation:
+        cat 1 > file1
+        cat 2 > file2
+        cat 3 > file3
+        cat 4 > file4
+
+    Files content - Bash:
+        file1: [1]
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+    Files content - Minishell:
+        file1: [1]
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+----------------------------------------------------------------------
+
+TEST 102: KO
+    Input:        [echo "Hello, World!" | cut -d " " -f 4-6]
+    Bash:         []
+    Minishell:    [Hello, World! | cut -d   -f 4-6]
+
+    Lab creation:
+        cat 1 > file1
+        cat 2 > file2
+        cat 3 > file3
+        cat 4 > file4
+
+    Files content - Bash:
+        file1: [1]
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+    Files content - Minishell:
+        file1: [1]
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+----------------------------------------------------------------------
+
+TEST 103: KO
+    Input:        [echo "Hello, World!" | cut -c 5-15]
+    Bash:         [o, World!]
+    Minishell:    []
+
+    Lab creation:
+        cat 1 > file1
+        cat 2 > file2
+        cat 3 > file3
+        cat 4 > file4
+
+    Files content - Bash:
+        file1: [1]
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+    Files content - Minishell:
+        file1: [1]
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+----------------------------------------------------------------------
+
+TEST 106: KO
+    Input:        [echo 1 | echo 2 | echo 3 | echo 4 | echo 42 | grep 2]
+    Bash:         [42]
+    Minishell:    []
+
+    Lab creation:
+        cat 1 > file1
+        cat 2 > file2
+        cat 3 > file3
+        cat 4 > file4
+
+    Files content - Bash:
+        file1: [1]
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+    Files content - Minishell:
+        file1: [1]
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+----------------------------------------------------------------------
+
+TEST 108: KO
+    Input:        [echo $LOGNAME | grep $LOGNAME]
+    Bash:         [eraccane]
+    Minishell:    []
+
+    Lab creation:
+        cat 1 > file1
+        cat 2 > file2
+        cat 3 > file3
+        cat 4 > file4
+
+    Files content - Bash:
+        file1: [1]
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+    Files content - Minishell:
+        file1: [1]
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+----------------------------------------------------------------------
+
+TEST 109: KO
+    Input:        [echo "$USER" 42 "'$SHELL'" | grep bash | wc -l]
+    Bash:         [0]
+    Minishell:    []
+
+    Lab creation:
+        cat 1 > file1
+        cat 2 > file2
+        cat 3 > file3
+        cat 4 > file4
+
+    Files content - Bash:
+        file1: [1]
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+    Files content - Minishell:
+        file1: [1]
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+----------------------------------------------------------------------
+
+TEST 120: KO
+    Input:        [echo ''$USER'' | grep $USER]
+    Bash:         [eraccane]
+    Minishell:    []
+
+    Lab creation:
+        cat 1 > file1
+        cat 2 > file2
+        cat 3 > file3
+        cat 4 > file4
+
+    Files content - Bash:
+        file1: [1]
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+    Files content - Minishell:
+        file1: [1]
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+----------------------------------------------------------------------
+
+TEST 122: KO
+    Input:        [cat 42 > not_executable_file]
+    Bash $?:      [1]
+    Minishell $?: [0]
+
+----------------------------------------------------------------------
+
+TEST 123: KO
+    Input:        [cat 42 > not_existing_file]
+    Bash $?:      [1]
+    Minishell $?: [0]
+
+----------------------------------------------------------------------
+
+TEST 124: KO
+    Input:        [./not_executable_file]
+    Bash $?:      [126]
+    Minishell $?: [127]
+
+----------------------------------------------------------------------
+
+TEST 126: KO
+    Input:        [< not_existing_file]
+    Bash $?:      [1]
+    Minishell $?: [0]
+
+----------------------------------------------------------------------
+
+TEST 128: KO
+    Input:        [>> not_existing_file]
+    Bash $?:      [0]
+    Minishell $?: [127]
+
+----------------------------------------------------------------------
+
+TEST 129: KO
+    Input:        [< not_existing_file > not_existing_file2]
+    Bash $?:      [1]
+    Minishell $?: [0]
+
+----------------------------------------------------------------------
+
+TEST 130: KO
+    Input:        [< not_existing_file >> not_existing_file2]
+    Bash $?:      [1]
+    Minishell $?: [0]
+
+----------------------------------------------------------------------
+
+TEST 133: KO
+    Input:        [ls not_existing_file]
+    Bash $?:      [2]
+    Minishell $?: [0]
+
+----------------------------------------------------------------------
+
+TEST 142: KO
+    Input:        [wc -l < /etc/passwd > file1 | wc -l]
+    Bash:         [0]
+    Minishell:    []
+
+    Lab creation:
+        cat 1 > file1
+        cat 2 > file2
+        cat 3 > file3
+        cat 4 > file4
+
+    Files content - Bash:
+        file1: [55]
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+    Files content - Minishell:
+        file1: []
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+----------------------------------------------------------------------
+
+TEST 144: KO
+    Input:        [ls -al -i < /etc/passwd > file1 | wc -l | echo 42]
+    Bash:         [42]
+    Minishell:    []
+
+    Lab creation:
+        cat 1 > file1
+        cat 2 > file2
+        cat 3 > file3
+        cat 4 > file4
+
+    Files content - Bash:
+        file1: [total 40\n5112130 drwx------   2 eraccane 2022_firenze  4096 Dec 19 16:11 .\n4718593 drwxrwxrwt 186 root     root         24576 Dec 19 16:11 ..\n5112131 -rw-r--r--   1 eraccane 2022_firenze     0 Dec 19 16:11 file1\n5112132 -rw-r--r--   1 eraccane 2022_firenze     2 Dec 19 16:11 file2\n5112133 -rw-r--r--   1 eraccane 2022_firenze     2 Dec 19 16:11 file3\n5112134 -rw-r--r--   1 eraccane 2022_firenze     2 Dec 19 16:11 file4]
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+    Files content - Minishell:
+        file1: []
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+----------------------------------------------------------------------
+
+TEST 145: KO
+    Input:        [cat < file1 | cat > file2]
+    Bash:         []
+    Minishell:    []
+
+    Lab creation:
+        cat 1 > file1
+        cat 2 > file2
+        cat 3 > file3
+        cat 4 > file4
+
+    Files content - Bash:
+        file1: [1]
+        file2: [1]
+        file3: [3]
+        file4: [4]
+
+    Files content - Minishell:
+        file1: [1]
+        file2: []
+        file3: [3]
+        file4: [4]
+
+----------------------------------------------------------------------
+
+TEST 146: KO
+    Input:        [cat < file1 | grep 1 > file2 | wc -l]
+    Bash:         [0]
+    Minishell:    [1]
+
+    Lab creation:
+        cat 1 > file1
+        cat 2 > file2
+        cat 3 > file3
+        cat 4 > file4
+
+    Files content - Bash:
+        file1: [1]
+        file2: [1]
+        file3: [3]
+        file4: [4]
+
+    Files content - Minishell:
+        file1: [1]
+        file2: []
+        file3: [3]
+        file4: [4]
+
+----------------------------------------------------------------------
+
+TEST 147: KO
+    Input:        [cat < file1 | grep 1 > file2 | wc -l | echo 42]
+    Bash:         [42]
+    Minishell:    [1]
+
+    Lab creation:
+        cat 1 > file1
+        cat 2 > file2
+        cat 3 > file3
+        cat 4 > file4
+
+    Files content - Bash:
+        file1: [1]
+        file2: [1]
+        file3: [3]
+        file4: [4]
+
+    Files content - Minishell:
+        file1: [1]
+        file2: []
+        file3: [3]
+        file4: [4]
+
+----------------------------------------------------------------------
+
+TEST 148: KO
+    Input:        [cat < file1 | grep 1 > file2 | wc -l | echo 42 | echo 21]
+    Bash:         [21]
+    Minishell:    [1]
+
+    Lab creation:
+        cat 1 > file1
+        cat 2 > file2
+        cat 3 > file3
+        cat 4 > file4
+
+    Files content - Bash:
+        file1: [1]
+        file2: [1]
+        file3: [3]
+        file4: [4]
+
+    Files content - Minishell:
+        file1: [1]
+        file2: []
+        file3: [3]
+        file4: [4]
+
+----------------------------------------------------------------------
+
+TEST 150: KO
+    Input:        [< file1 | echo 42 > file2 | grep 1 | wc -l]
+    Bash:         [0]
+    Minishell:    [0]
+
+    Lab creation:
+        cat 1 > file1
+        cat 2 > file2
+        cat 3 > file3
+        cat 4 > file4
+
+    Files content - Bash:
+        file1: [1]
+        file2: [42]
+        file3: [3]
+        file4: [4]
+
+    Files content - Minishell:
+        file1: [1]
+        file2: [42 ]
+        file3: [3]
+        file4: [4]
+
+----------------------------------------------------------------------
+
+TEST 151: KO
+    Input:        [cat < file1 | cat > file2 < file1 | wc -l]
+    Bash:         [0]
+    Minishell:    [1]
+
+    Lab creation:
+        cat 1 > file1
+        cat 2 > file2
+        cat 3 > file3
+        cat 4 > file4
+
+    Files content - Bash:
+        file1: [1]
+        file2: [1]
+        file3: [3]
+        file4: [4]
+
+    Files content - Minishell:
+        file1: [1]
+        file2: []
+        file3: [3]
+        file4: [4]
+
+----------------------------------------------------------------------
+
+TEST 152: KO
+    Input:        [echo 42 > file1 | cat | wc -l]
+    Bash:         [0]
+    Minishell:    [0]
+
+    Lab creation:
+        cat 1 > file1
+        cat 2 > file2
+        cat 3 > file3
+        cat 4 > file4
+
+    Files content - Bash:
+        file1: [42]
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+    Files content - Minishell:
+        file1: [42 ]
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+----------------------------------------------------------------------
+
+TEST 153: KO
+    Input:        [echo 42 < file1 | cat | wc -l]
+    Bash:         [1]
+    Minishell:    [42 ]
+
+    Lab creation:
+        cat 1 > file1
+        cat 2 > file2
+        cat 3 > file3
+        cat 4 > file4
+
+    Files content - Bash:
+        file1: [1]
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+    Files content - Minishell:
+        file1: [1]
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+----------------------------------------------------------------------
+
+TEST 155: KO
+    Input:        [>> file1 | echo 42]
+    Bash:         [42]
+    Minishell:    [Command: >> not found]
+
+    Lab creation:
+        cat 1 > file1
+        cat 2 > file2
+        cat 3 > file3
+        cat 4 > file4
+
+    Files content - Bash:
+        file1: [1]
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+    Files content - Minishell:
+        file1: [1]
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+----------------------------------------------------------------------
+
+TEST 159: KO
+    Input:        [echo 42 | cat | cat | cat | cat]
+    Bash:         [42]
+    Minishell:    []
+
+    Lab creation:
+        cat 1 > file1
+        cat 2 > file2
+        cat 3 > file3
+        cat 4 > file4
+
+    Files content - Bash:
+        file1: [1]
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+    Files content - Minishell:
+        file1: [1]
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+----------------------------------------------------------------------
+
+TEST 162: KO
+    Input:        [cat < file1 >> file2 > file1 | cat | echo 21]
+    Bash:         [21]
+    Minishell:    []
+
+    Lab creation:
+        cat 1 > file1
+        cat 2 > file2
+        cat 3 > file3
+        cat 4 > file4
+
+    Files content - Bash:
+        file1: []
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+    Files content - Minishell:
+        file1: []
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+----------------------------------------------------------------------
+
+TEST 163: KO
+    Input:        [ls / | grep c | cat > file1]
+    Bash:         []
+    Minishell:    []
+
+    Lab creation:
+        cat 1 > file1
+        cat 2 > file2
+        cat 3 > file3
+        cat 4 > file4
+
+    Files content - Bash:
+        file1: [etc\nproc]
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+    Files content - Minishell:
+        file1: [1]
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+----------------------------------------------------------------------
+
+TEST 165: KO
+    Input:        [ls / | grep home | wc -l | < file1 > file2 | cat]
+    Bash:         []
+    Minishell:    []
+
+    Lab creation:
+        cat 1 > file1
+        cat 2 > file2
+        cat 3 > file3
+        cat 4 > file4
+
+    Files content - Bash:
+        file1: [1]
+        file2: []
+        file3: [3]
+        file4: [4]
+
+    Files content - Minishell:
+        file1: [1]
+        file2: [2]
+        file3: [3]
+        file4: [4]
+
+----------------------------------------------------------------------
