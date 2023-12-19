@@ -6,7 +6,7 @@
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 11:41:45 by eraccane          #+#    #+#             */
-/*   Updated: 2023/12/18 21:06:21 by eraccane         ###   ########.fr       */
+/*   Updated: 2023/12/19 13:35:59 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,16 +51,10 @@ int	count_red_inpipe(t_env *e)
 void	pipe_redir_fork(t_env *e)
 {
 	close(e->pipe_fd[0]);
-	if (count_red_inpipe(e) > 0)
+	dup2(e->pipe_fd[1], STDOUT_FILENO);
+	close(e->pipe_fd[1]);
+	if (e->tokens->type == NOBUILT || e->tokens->type == PATH)
 	{
-		executing(e);
-		// dup2(e->pipe_fd[1], e->fd_redir);
-		// close(e->pipe_fd[1]);
-	}
-	else if (e->tokens->type == NOBUILT || e->tokens->type == PATH)
-	{
-		dup2(e->pipe_fd[1], STDOUT_FILENO);
-		close(e->pipe_fd[1]);
 		redir_free(e);
 		alloc_flagmatrix(e);
 		alloc_cmd_path(e);
@@ -79,22 +73,32 @@ void	pipe_redir_fork(t_env *e)
 
 void	mult_pipe_redir(t_env *e)
 {
-	e->pid_pipe = fork();
-	if (e->pid_pipe < 0)
+	if (count_red_inpipe(e) > 0)
 	{
-		perror("fork");
-		exiting(e, 1);
-	}
-	else if (e->pid_pipe == 0)
-		pipe_redir_fork(e);
-	else
-	{
+		executing(e);
 		close(e->pipe_fd[1]);
 		dup2(e->pipe_fd[0], STDIN_FILENO);
 		close(e->pipe_fd[0]);
-		waitpid(e->pid_pipe, &e->status, 0);
-		if (WIFEXITED(e->status))
-			e->exit = WEXITSTATUS(e->status);
+	}
+	else
+	{
+		e->pid_pipe = fork();
+		if (e->pid_pipe < 0)
+		{
+			perror("fork");
+			exiting(e, 1);
+		}
+		else if (e->pid_pipe == 0)
+			pipe_redir_fork(e);
+		else
+		{
+			close(e->pipe_fd[1]);
+			dup2(e->pipe_fd[0], STDIN_FILENO);
+			close(e->pipe_fd[0]);
+			waitpid(e->pid_pipe, &e->status, 0);
+			if (WIFEXITED(e->status))
+				e->exit = WEXITSTATUS(e->status);
+		}
 	}
 }
 

@@ -6,7 +6,7 @@
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 23:51:33 by eraccane          #+#    #+#             */
-/*   Updated: 2023/12/13 01:19:17 by eraccane         ###   ########.fr       */
+/*   Updated: 2023/12/19 13:08:45 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	echo_quotes(t_env *e, t_token *start)
 {
-	int		i;
+	int	i;
 
 	start = start_token(e->tokens);
 	e->flag_quotes = 0;
@@ -66,8 +66,8 @@ int	find_inenv(char **env, char *str)
 			z++;
 			j++;
 		}
-		if (env[i][z] == '=' && (str[j] == '\0' || str[j] == 34 \
-			|| str[j] == 39))
+		if (env[i][z] == '=' && (str[j] == '\0' || str[j] == 34
+				|| str[j] == 39))
 			return (i);
 		i++;
 	}
@@ -101,7 +101,8 @@ void	last_echo_cmd(t_env *e)
 		printf("%d", e->exit_status);
 	else if (check_quotes(e->tokens->string) == 1)
 		echo_quotes(e, NULL);
-	else if (find_dollar(e->tokens->string) == 1)
+	else if (find_dollar(e->tokens->string) == 1 && \
+		str_cmp(e->tokens->string, "$") == 0)
 		quotes_format(e);
 	else
 		printf("%s", e->tokens->string);
@@ -110,7 +111,7 @@ void	last_echo_cmd(t_env *e)
 /* NOTE
 ** - Flag = 1 -> there's -n flag
 ** - Flag = 0 -> there isn't -n flag
-** e->token is already setted to the next token of echo (so if command is 
+** e->token is already setted to the next token of echo (so if command is
 ** "echo -n" the token setted is "-n", in case of "echo something" is setted
 ** on "something")
 */
@@ -130,7 +131,8 @@ void	echo_cmd(t_env *e)
 			printf("%d", e->exit_status);
 		else if (check_quotes(e->tokens->string) == 1)
 			echo_quotes(e, NULL);
-		else if (find_dollar(e->tokens->string) == 1)
+		else if (find_dollar(e->tokens->string) == 1 && \
+			str_cmp(e->tokens->string, "$") == 0)
 			quotes_format(e);
 		else
 			printf("%s", e->tokens->string);

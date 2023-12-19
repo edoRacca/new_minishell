@@ -6,7 +6,7 @@
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 22:51:29 by eraccane          #+#    #+#             */
-/*   Updated: 2023/12/13 22:51:06 by eraccane         ###   ########.fr       */
+/*   Updated: 2023/12/19 11:15:14 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,7 @@ void	init_env(t_env *e, char **env)
 	e->quotes = -1;
 	e->hdoc = 0;
 	e->tokens = NULL;
+    e->tmp_fd = -1;
 	e->stdin = dup(STDIN_FILENO);
 	e->stdout = dup(STDOUT_FILENO);
 }

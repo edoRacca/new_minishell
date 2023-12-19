@@ -6,7 +6,7 @@
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 16:50:41 by eraccane          #+#    #+#             */
-/*   Updated: 2023/12/18 18:42:15 by eraccane         ###   ########.fr       */
+/*   Updated: 2023/12/19 11:03:33 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ void	redirect_trunc(t_env *e)
 			e->exit_status = 1;
 			perror("open");
 		}
+        e->tmp_fd = e->fd_redir;
 		close(e->fd_redir);
 		e->exit = 1;
 	}
@@ -65,6 +66,7 @@ void	redirect_append(t_env *e)
 			e->exit_status = 1;
 			perror("open");
 		}
+        e->tmp_fd = e->fd_redir;
 		close(e->fd_redir);
 		e->exit = 1;
 	}
@@ -84,6 +86,7 @@ void	redirect_input(t_env *e)
 		e->exit = 1;
 		return ;
 	}
+    e->tmp_fd = e->fd_redir;
 	input_continue(e, e->fd_redir);
 	e->exit = 1;
 	close(e->fd_redir);

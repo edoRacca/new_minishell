@@ -6,7 +6,7 @@
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 17:25:13 by eraccane          #+#    #+#             */
-/*   Updated: 2023/12/18 18:34:21 by eraccane         ###   ########.fr       */
+/*   Updated: 2023/12/19 12:26:33 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,6 +197,7 @@ typedef struct s_env
 	int				pipe_fd[2];
 	int				pid_pipe;
 	int				fd_redir;
+	int				tmp_fd;
 	int				stdin;
 	int				stdout;
 	t_token			*tokens;

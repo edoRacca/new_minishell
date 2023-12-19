@@ -6,7 +6,7 @@
 /*   By: eraccane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 17:52:18 by eraccane          #+#    #+#             */
-/*   Updated: 2023/12/18 19:24:39 by eraccane         ###   ########.fr       */
+/*   Updated: 2023/12/19 10:55:16 by eraccane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ void	fork_redir(t_env *e, char *filename, int type)
 		perror("open");
 		exiting(e, 0);
 	}
+    e->tmp_fd = e->fd_redir;
 	dup2(e->fd_redir, 1);
 	close(e->fd_redir);
 	if (e->cmd_path != NULL)
